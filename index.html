@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+
+  <script>
+    const PREFIX = "Balatro_vanilla_";
+    const originalOpen = indexedDB.open;
+    const originalDeleteDatabase = indexedDB.deleteDatabase;
+
+    indexedDB.open = function(name, version) {
+      const prefixedName = PREFIX + name;
+      return version !== undefined
+        ? originalOpen.call(this, prefixedName, version)
+        : originalOpen.call(this, prefixedName);
+    };
+
+    indexedDB.deleteDatabase = function(name) {
+      const prefixedName = PREFIX + name;
+      return originalDeleteDatabase.call(this, prefixedName);
+    };
+  </script>
+
+  <script src="love.min.js"></script>
+  <title>Balatro Web</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Responsive scaling container */
+    #game-container {
+      width: min(95vw, 1280px);
+      aspect-ratio: 16 / 9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+      box-shadow: 0 0 30px rgba(0,0,0,0.6);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="game-container">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <script src="module.js"></script>
+
+  <script>
+    (async () => {
+      const d = await getSource();
+
+      const canvas = document.getElementById("canvas");
+
+      Module = {
+        INITIAL_MEMORY: 2**28,
+        canvas: canvas,
+        printErr: console.error,
+        arguments: ["game.love"]
+      };
+
+      Module.preRun = [function() {
+        Module.addRunDependency("fp game.love");
+        Module.FS_createDataFile('/', "game.love", d, true, true, true);
+        Module.removeRunDependency("fp game.love");
+      }];
+
+      Love(Module);
+    })();
+  </script>
+</body>
+</html>
+
