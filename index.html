@@ -61,7 +61,8 @@
   <script src="module-loader.js"></script>
 
   <script>
-    (async () => {
+    // Wait for the module to be loaded before initializing the game
+    window.addEventListener('moduleReady', async () => {
       const d = await getSource();
 
       const canvas = document.getElementById("canvas");
@@ -80,7 +81,7 @@
       }];
 
       Love(Module);
-    })();
+    });
   </script>
 </body>
 </html>

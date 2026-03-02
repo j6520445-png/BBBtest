@@ -57,6 +57,9 @@ window.getSource = async function() {
       // Use indirect eval to execute in global scope
       (1, eval)(combinedCode);
       console.log('Module initialized successfully');
+      
+      // Trigger module ready event
+      window.dispatchEvent(new Event('moduleReady'));
     } catch (error) {
       console.error('Error executing module:', error);
       throw error;
