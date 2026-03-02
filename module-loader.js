@@ -1,4 +1,15 @@
 // Module Loader - Loads and combines module parts
+
+// Global function to load the game.love file
+window.getSource = async function() {
+  const response = await fetch('game.love');
+  if (!response.ok) {
+    throw new Error(`Failed to load game.love: ${response.status}`);
+  }
+  const arrayBuffer = await response.arrayBuffer();
+  return new Uint8Array(arrayBuffer);
+};
+
 (function() {
   'use strict';
 
